@@ -52,6 +52,8 @@ DataFrame(np.random.randn(10, 5), columns=['a', 'b', 'c', 'd', 'e'])
 
 train.loc[[6, 5, 3], ['MasVnrType', 'MasVnrArea', 'Electrical']]
 
+all_titles = pd.concat([train.title, test.title]).unique()
+
 df.sort_values(by='ratio', ascending=False, inplace=True)
 seris.sort_values(ascending=False)
 
@@ -186,9 +188,9 @@ plt.show()
 #### plot_model
 
 from keras.utils.vis_utils import plot_model
-from IPython.display import Image
-plot_model(get_model(), to_file="/tmp/model.png", show_shapes=True)
-Image('/tmp/model.png')
+from IPython.display import Image, display
+plot_model(model, to_file="/tmp/model.png", show_shapes=True)
+display(Image('/tmp/model.png'))
 
 #### Scikit-learn
 
@@ -311,7 +313,7 @@ print('model built')
 RUN = RUN + 1 if 'RUN' in locals() else 1
 print("RUN {}".format(RUN))
 
-LOG_DIR = '/output/training_logs/-un-{}'.format(RUN)
+LOG_DIR = '/output/training_logs/run-{}'.format(RUN)
 LOG_FILE_PATH = LOG_DIR + '/checkpoint-{epoch:02d}-{val_loss:.4f}.hdf5'
 
 tensorboard = TensorBoard(log_dir=LOG_DIR, write_images=True)
