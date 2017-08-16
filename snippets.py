@@ -306,6 +306,8 @@ class MyEvaluator(Callback):
     def on_epoch_end(self, epoch, logs=None):
         X_test, y_test = next(self.gen) # (1, 128, 128, 1)
         y_pred = self.model.predict(X_test) # (1, 128, 128, AB_PAIRS)
+evaluator = MyEvaluator()
+
 
 model = get_model()
 print('model built')
@@ -316,10 +318,12 @@ print("RUN {}".format(RUN))
 LOG_DIR = '/output/training_logs/run-{}'.format(RUN)
 LOG_FILE_PATH = LOG_DIR + '/checkpoint-{epoch:02d}-{val_loss:.4f}.hdf5'
 
-tensorboard = TensorBoard(log_dir=LOG_DIR, write_images=True)
+tensorboard = TensorBoard(log_dir=LOG_DIR, histogram_freq=1, write_grads=False, write_graph=False)
 checkpoint = ModelCheckpoint(filepath=LOG_FILE_PATH, monitor='val_loss', verbose=1, save_best_only=True)
-early_stopping = EarlyStopping(monitor='val_loss', patience=4, verbose=1)
-evaluator = MyEvaluator()
+early_stopping = EarlyStopping(monitor='val_loss', patience=3, verbose=1)
+
+m1.fit(X_train, y_train, epochs=1000, batch_size=32, validation_split=0.3, 
+                  callbacks=[tensorboard, checkpoint, early_stopping], verbose=1)
 
 history = model.fit_generator(generator=gen(8), steps_per_epoch=64,
                               validation_data=gen(8, random_choose=True), validation_steps=8,
