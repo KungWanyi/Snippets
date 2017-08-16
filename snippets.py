@@ -322,7 +322,7 @@ tensorboard = TensorBoard(log_dir=LOG_DIR, histogram_freq=1, write_grads=False, 
 checkpoint = ModelCheckpoint(filepath=LOG_FILE_PATH, monitor='val_loss', verbose=1, save_best_only=True)
 early_stopping = EarlyStopping(monitor='val_loss', patience=3, verbose=1)
 
-m1.fit(X_train, y_train, epochs=1000, batch_size=32, validation_split=0.3, 
+m1.fit(X_train, y_train, epochs=1000, batch_size=32, validation_split=0.3,
                   callbacks=[tensorboard, checkpoint, early_stopping], verbose=1)
 
 history = model.fit_generator(generator=gen(8), steps_per_epoch=64,
