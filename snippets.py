@@ -1,25 +1,3 @@
-#### Python
-
-list_str_set = [1,2,3]
-for i, v in enumerate(list_or_str):
-    print(i, v)
-
-all_chars = ['a', 'd', 'e']
-char_indices = {c:i for i, c in enumerate(all_chars)}
-char_dict = {i:c for i, c in enumerate(all_chars)}
-
-#### Regular Expression
-# TODO...
-# ref to: Quora/Quora-Feature-Enginnering.ipynb
-import re
-
-pattern1 = re.compile(r'(?<=\w)([\?\.,\)])')
-pattern2 = re.compile(r'([\(])(?=\w)')
-
-def get_title(name):
-    title_search = re.search(' ([A-Za-z]+)\.', name)
-    return title_search.group(1) if title_search else "_NO_TITLE_"
-
 #### numpy
 
 import numpy as np
@@ -72,6 +50,63 @@ train['q1_start_with_what'] = train['question1_refine'].apply(start_with, symbol
 
 df = df1.merge(df2, how='left', left_on='Idx', right_on='Idx')
 
+#### Python
+
+list_str_set = [1,2,3]
+for i, v in enumerate(list_or_str):
+    print(i, v)
+
+all_chars = ['a', 'd', 'e']
+char_indices = {c:i for i, c in enumerate(all_chars)}
+char_dict = {i:c for i, c in enumerate(all_chars)}
+
+#### Regular Expression
+import re
+
+pattern = re.compile(r'(\d+)\W(\w+)')
+s = "I am 26 years old and I have 5 brothers"
+
+# Match
+#   re.match只匹配字符串的开始，如果字符串开始不符合正则表达式，则匹配失败，函数返回None
+print('\n****** Match ******')
+r = re.match(r'^I', s)
+if r:
+    print(r.group()) # I
+
+# Search
+#   re.search 扫描整个字符串并返回**第一个**成功的匹配。
+#   所以匹配不到5 brothers
+print('\n****** Search ******')
+r = re.search(pattern, s)
+if r:
+    # print(r)
+    print(r.groups()) # ('26', 'years')
+    print(r.group()) # 26 years # groups()返回整个匹配字符串
+    print(r.group(0)) # 26 years # groups(0)返回整个匹配字符串
+    print(r.group(1)) # 26 # group(1)返回第一个括号对应的匹配
+    print(r.group(2)) # years
+
+# Sub
+#   替换字符串匹配项
+print('\n****** Sub ******')
+sub_s = re.sub(pattern, '|', s)
+print(sub_s) # I am | old and I have |
+
+# 替换函数
+def sub_func(matched):
+    num = int(matched.group(1)) + 1
+    return '{} {}'.format(num, matched.group(2))
+
+sub_s = re.sub(pattern, sub_func, s)
+print(sub_s) # I am 27 years old and I have 6 brothers
+
+# FindAll
+#   替换字符串匹配项
+print('\n****** FindAll ******')
+f = re.findall(pattern, s)
+print(type(f)) # <class 'list'>
+print(f) # [('26', 'years'), ('5', 'brothers')]
+
 #### Feature Engineering
 
 def fill_nan(f, method):
@@ -82,7 +117,6 @@ def fill_nan(f, method):
     train_master.loc[train_master[f].isnull(), f] = common_value
 # 通过pd.value_counts(train_master[f])的观察得到经验
 fill_nan('UserInfo_1', 'most')
-
 
 submission = pd.DataFrame({
     "id": test.id,
@@ -158,12 +192,78 @@ corr = train.corr()
 fig, ax = plt.subplots(figsize=(20, 20))
 sns.heatmap(corr, cmap=sns.diverging_palette(240, 10, as_cmap = True), ax=ax)
 
-#### Random
-# TODO...
-from random import randint
+#### Random Python
+import random
+print('\n***** Python Random *****')
+# random.seed(111)
 
-np.random.uniform() < EPSILON
-np.random.choice([1,2,3])
+print(random.randint(2,4)) # 2,3,4中的一个
+
+print(random.choice([1,2,3,4])) # 选择一个
+#random.choices
+
+l = [1,2,3,4]
+random.shuffle(l) # inplace
+print(l) # [4, 3, 1, 2]
+
+# random.sample
+
+# 0-1之间的随机数
+print(random.random()) # 0.5265413912197312
+
+# start到end之间的均匀分布随机数
+print(random.uniform(0, 10))
+
+# mu=0, sigma=1的高斯分布取一个随机值
+print(random.gauss(0, 1))
+
+
+#### Random Numpy
+import numpy as np
+print('\n***** Numpy Random *****')
+
+################Simple random data####################
+
+# uniform distribution
+print(np.random.rand(2, 3))
+# [[ 0.862651    0.07646984  0.94976024]
+#  [ 0.17682093  0.86376723  0.7870779 ]]
+
+#“standard normal” distribution
+print(np.random.randn(2, 3))
+# [[-0.6592159  -1.25638324 -0.16564466]
+#  [-0.54032012  0.13584836 -1.10408671]]
+
+# numpy.random.randint(low, high=None, size=None, dtype='l')
+print(np.random.randint(low=1, high=5, size=5)) # [1 1 4 1 2]
+
+print(np.random.random_sample()) # 0.22454530048643417
+print(np.random.random_sample(size=4)) # [ 0.62813059  0.98560066  0.65122934  0.36086048]
+print(np.random.random_integers(low=1, high=5, size=3)) # [1 3 3]
+
+# numpy.random.choice(a, size=None, replace=True, p=None)
+print(np.random.choice(10, 3)) # [6 8 3]
+print(np.random.choice(['a','b','c','d'], 2, p=[0.9, 0.08, 0.01, 0.01])) # ['a' 'a']
+
+#################Permutations###################
+
+print(np.arange(10)) # [0 1 2 3 4 5 6 7 8 9]
+
+arr = np.arange(start=1, stop=10, step=2)
+print(arr) # [1 3 5 7 9]
+np.random.shuffle(arr)
+print(arr) # [5 1 9 7 3]
+
+#################Distribution###################
+
+# numpy.random.normal(loc=0.0, scale=1.0, size=None)
+print(np.random.normal(loc=0, scale=1, size=10))
+# [ 0.51795205 -1.64528162 -0.6906818   0.88025762  0.69980895 -0.29976349
+#   0.6081879  -1.7873237  -0.03242506  0.53256956]
+
+print(np.random.uniform(low=0, high=1, size=10))
+# [ 0.85868341  0.94486446  0.75427028  0.69226142  0.21555906  0.36668903
+#   0.42261567  0.33899154  0.08086831  0.02638306]
 
 #### cv2 opencv
 # pip install opencv-python
