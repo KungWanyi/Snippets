@@ -659,12 +659,19 @@ def parse_date(date_str, str_format='YYYY/MM/DD'):
     month_stage = int((d.day-1) / 10) + 1
     return (d.timestamp, d.year, d.month, d.day, d.week, d.isoweekday(), month_stage)
 
-#### hypertools
+#### Hypertools
 # ref to: Iris/visualization.ipynb
 
+from sklearn import datasets
 import hypertools as hyp
 
-hyp.plot(iris_with_centroid.drop('Species', axis=1), 'o', 
-         group=iris_with_centroid.Species, 
-         legend=list(set(iris_with_centroid.Species)))
+digits = datasets.load_digits(n_class=4)
+data = digits.data
+group = digits.target.astype('str')
+
+hyp.plot(data, '.', group=group, legend=list(set(group)))
+# hyp.plot(data, '.', group=group, legend=list(set(group)), model='TSNE') # 慢了很多
+
+# hyp.plot(data, '.', n_clusters=4, ndims=2)
+
 
