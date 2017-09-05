@@ -382,10 +382,14 @@ def get_model():
     model.add(LSTM(LSTM_UNITS, input_shape=(SEN_LEN, len(all_chars)), return_sequences=True))
     model.add(LSTM(LSTM_UNITS, input_shape=(SEN_LEN, len(all_chars)), return_sequences=False))
 
-    gru_1 = GRU(rnn_size, return_sequences=True, kernel_initializer='he_normal')(x)
-    gru_1b = GRU(rnn_size, return_sequences=True, go_backwards=True, kernel_initializer='he_normal')(x)
-    # keras.layers.add
-    gru1_merged = add([gru_1, gru_1b])
+    # 新的写法
+    model.add(Bidirectional(LSTM(128, dropout=0.2, recurrent_dropout=0.2)))
+
+    # 废弃的写法
+    # gru_1 = GRU(rnn_size, return_sequences=True, kernel_initializer='he_normal')(x)
+    # gru_1b = GRU(rnn_size, return_sequences=True, go_backwards=True, kernel_initializer='he_normal')(x)
+    # # keras.layers.add
+    # gru1_merged = add([gru_1, gru_1b])
 
     x = K.reshape(x, (-1, AB_PAIRS))
     x = K.softmax(x)
