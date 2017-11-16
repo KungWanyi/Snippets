@@ -427,11 +427,11 @@ checkpoint = ModelCheckpoint(filepath=LOG_FILE_PATH, monitor='val_loss', verbose
 early_stopping = EarlyStopping(monitor='val_loss', patience=3, verbose=1)
 
 m1.fit(X_train, y_train, epochs=1000, batch_size=32, validation_split=0.3,
-                  callbacks=[tensorboard, checkpoint, early_stopping], verbose=1)
+                  callbacks=[tensorboard, checkpoint, early_stopping], verbose=2)
 
 history = model.fit_generator(generator=gen(8), steps_per_epoch=64,
                               validation_data=gen(8, random_choose=True), validation_steps=8,
-                              epochs=10000, verbose=1, callbacks=[tensorboard, checkpoint, early_stopping, evaluator])
+                              epochs=10000, verbose=2, callbacks=[tensorboard, checkpoint, early_stopping, evaluator])
 
 #### ImageDataGenerator
 
