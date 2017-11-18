@@ -60,6 +60,50 @@ all_chars = ['a', 'd', 'e']
 char_indices = {c:i for i, c in enumerate(all_chars)}
 char_dict = {i:c for i, c in enumerate(all_chars)}
 
+#### String format
+'%s %s' % ('one', 'two')
+'{1} {0}'.format('one', 'two') # 反过来
+'{0} {0}'.format('one') # one one这样就不用把one写2遍了
+
+# padding
+'{:10}'.format('test') # 'test      '
+'{:>10}'.format('test') # '      test'
+'{:^5}'.format(3) # '  3  '
+
+'{:_^5}'.format(3) #  '__3__'
+
+# Truncating
+'{:.5}'.format('xylophone') # xylop
+
+# padding & Truncating
+'{:10.5}'.format('xylophone') # 'xylop     '
+
+# Number
+'{:d}'.format(42)
+'{:f}'.format(3.141592653589793) # '3.141593' 默认使用了f，会被截短！！！
+'{}'.format(3.141592653589793) # '3.141592653589793'
+
+# #Format 最常用Float
+'{:.4f}'.format(3.141592653589793) # '3.1416'
+'{:6.2f}'.format(3.141592653589793) # '  3.14'
+'{:06.2f}'.format(3.141592653589793) # '003.14'
+
+# Named placeholders
+'{first} {last}'.format(first='Hodor', last='Hodor!')
+
+# datetime
+from datetime import datetime
+'{:%Y-%m-%d %H:%M}'.format(datetime(2001, 2, 3, 4, 5))
+# 2001-02-03 04:05
+
+# object
+class Data(object):
+    def __str__(self):
+        return 'str'
+    def __repr__(self):
+        return 'repr'
+'{0!s} {0!r}'.format(Data()) # str repr
+
 #### Regular Expression
 import re
 
@@ -426,12 +470,13 @@ tensorboard = TensorBoard(log_dir=LOG_DIR, histogram_freq=1, write_grads=False, 
 checkpoint = ModelCheckpoint(filepath=LOG_FILE_PATH, monitor='val_loss', verbose=1, save_best_only=True)
 early_stopping = EarlyStopping(monitor='val_loss', patience=3, verbose=1)
 
+# verbose也可以是2，从而不输出进度条，每个epoch只输出一个val结果
 m1.fit(X_train, y_train, epochs=1000, batch_size=32, validation_split=0.3,
-                  callbacks=[tensorboard, checkpoint, early_stopping], verbose=2)
+                  callbacks=[tensorboard, checkpoint, early_stopping], verbose=1)
 
 history = model.fit_generator(generator=gen(8), steps_per_epoch=64,
                               validation_data=gen(8, random_choose=True), validation_steps=8,
-                              epochs=10000, verbose=2, callbacks=[tensorboard, checkpoint, early_stopping, evaluator])
+                              epochs=10000, verbose=1, callbacks=[tensorboard, checkpoint, early_stopping, evaluator])
 
 #### ImageDataGenerator
 
