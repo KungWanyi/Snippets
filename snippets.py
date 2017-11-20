@@ -401,7 +401,7 @@ gs.best_params_
 
 from keras.layers import Conv2D, Conv2DTranspose, BatchNormalization, MaxPooling2D, UpSampling2D, Lambda
 from keras.models import Model, Input
-from keras.callbacks import Callback, TensorBoard, ModelCheckpoint, EarlyStopping
+from keras.callbacks import Callback, CSVLogger, TensorBoard, ModelCheckpoint, EarlyStopping, LearningRateScheduler
 import keras.backend as K
 
 def my_loss():
@@ -466,9 +466,13 @@ print("RUN {}".format(RUN))
 LOG_DIR = '/output/training_logs/run-{}'.format(RUN)
 LOG_FILE_PATH = LOG_DIR + '/checkpoint-{epoch:02d}-{val_loss:.4f}.hdf5'
 
+csv_log = callbacks.CSVLogger(filename =  LOG_DIR + '/log.csv')
 tensorboard = TensorBoard(log_dir=LOG_DIR, histogram_freq=1, write_grads=False, write_graph=False)
 checkpoint = ModelCheckpoint(filepath=LOG_FILE_PATH, monitor='val_loss', verbose=1, save_best_only=True)
 early_stopping = EarlyStopping(monitor='val_loss', patience=3, verbose=1)
+lr_decay = callbacks.LearningRateScheduler(schedule=lambda epoch: learning_rate * (0.9 ** epoch))
+# schedule: a function that takes an epoch index as input (integer, indexed from 0)
+# and returns a new learning rate as output (float).
 
 # verbose也可以是2，从而不输出进度条，每个epoch只输出一个val结果
 m1.fit(X_train, y_train, epochs=1000, batch_size=32, validation_split=0.3,
@@ -476,7 +480,8 @@ m1.fit(X_train, y_train, epochs=1000, batch_size=32, validation_split=0.3,
 
 history = model.fit_generator(generator=gen(8), steps_per_epoch=64,
                               validation_data=gen(8, random_choose=True), validation_steps=8,
-                              epochs=10000, verbose=1, callbacks=[tensorboard, checkpoint, early_stopping, evaluator])
+                              epochs=10000, verbose=1,
+                              callbacks=[csv_log, tensorboard, checkpoint, early_stopping, lr_decay, evaluator])
 
 #### ImageDataGenerator
 
