@@ -8,6 +8,8 @@ image = np.zeros((256, 256, 3), dtype=np.float32)
 import pandas as pd
 from pandas import Series, DataFrame
 
+
+### csv读取
 dtype = {
     'id': np.int8,
     'qid1': np.int8,
@@ -19,6 +21,18 @@ dtype = {
 train = pd.read_csv('train.csv', dtype=dtype)
 train = pd.read_csv('train.csv', encoding='gbk')
 train = pd.read_csv('file.data', sep='\t', names=['user_id', 'item_id', 'rating', 'timestamp'])
+
+### csv保存
+train.to_csv('output.csv', index=False)
+
+# JSON读取&保存
+# 看需要加encoding
+import json
+with open('input.json') as f:
+    j = json.load(f)
+with open('output.json', 'w') as f:
+    json.dump(data, f, ensure_ascii=False)
+
 
 Series(np.arange(3, 6), index=['a','b','c'], dtype=np.int32)
 
