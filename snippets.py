@@ -105,10 +105,11 @@ char_dict = {i:c for i, c in enumerate(all_chars)}
 # Named placeholders
 '{first} {last}'.format(first='Hodor', last='Hodor!')
 
-# datetime
+# datetime，不要用date
 from datetime import datetime
-'{:%Y-%m-%d %H:%M}'.format(datetime(2001, 2, 3, 4, 5))
-# 2001-02-03 04:05
+d = datetime.strptime("2019-03-03 12:24:01", "%Y-%m-%d %H:%M:%S") # 和PHP不同
+d.strftime("%Y-%m-%d %H:%M:%S")
+
 
 # object
 class Data(object):
