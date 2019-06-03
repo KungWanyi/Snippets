@@ -25,6 +25,10 @@ train = pd.read_csv('file.data', sep='\t', names=['user_id', 'item_id', 'rating'
 ### csv保存
 train.to_csv('output.csv', index=False)
 
+# map apply函数
+pat_df['examination_report_date'] = pat_df['examination_report_date'].map(convert_time)
+
+
 # JSON读取&保存
 # 看需要加encoding
 import json
@@ -110,6 +114,8 @@ from datetime import datetime
 d = datetime.strptime("2019-03-03 12:24:01", "%Y-%m-%d %H:%M:%S") # 和PHP不同
 d.strftime("%Y-%m-%d %H:%M:%S")
 
+def convert_time(t):
+    return datetime.strptime(t, "%Y/%m/%d %H:%M:%S").strftime("%Y-%m-%d %H:%M:%S")
 
 # object
 class Data(object):
